@@ -501,6 +501,11 @@ class sendsayActionRecord extends sendsayAction {
         $this->sub_subscribe_params['obj']['a25']['q506'] = $data['salon_phone'];
         $this->sub_subscribe_params['obj']['a25']['q743'] = $data['doctor'];
         $this->sub_subscribe_params['obj']['a25']['q731'] = $data['doctor_pic'];
+        if (!$special) {
+            $this->sub_subscribe_params['obj']['a25']['q132'] = 'regular';
+        } else {
+            $this->sub_subscribe_params['obj']['a25']['q132'] = $special;
+        }
         $this->sub_subscribe_params['obj']['a25']['q440'] = array($data['mail']);
         $this->sub_subscribe_params['head_attach'] = array(array(
             "head" => $data['phone'],
