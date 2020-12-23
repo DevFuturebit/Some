@@ -124,16 +124,49 @@ class sendsayaddsubscriber
         $res = $this->sub_api_execute($this->sub_subscribe_params);
         //$ans=json_decode($res, true);
 
-
+        /* времено отключаем на время тестирования передача СМС через Devino
         $this->sub_send_params['users.list']         = $data['phone'];
 
         $res = $this->sub_api_execute($this->sub_send_params);
+        */
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,"https://integrationapi.net/rest/v2/Sms/Send");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,      http_build_query(array(
+            'Login' => 'Lensmaster',
+            'Password' => 'Bitfuture2020',
+            'DestinationAddress' => trim($data['phone']),
+            'SourceAddress' => 'Lensmaster',
+            'Data' => trim($data['smsbody']),
+            'Validity' => '0',
+        )));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $server_output = curl_exec($ch);
+        //echo $server_output.'<br>';
+        curl_close ($ch);
         $ans=json_decode($res, true);
 
       // echo "<pre>";
 //print_r($ans);
 //echo "</pre>";
 //die();
+        $server_output = json_decode($server_output, true);
+        $this->sub_subscribe_params['datakey']             = array(array(
+            "sms_sent", "merge", array( date("Y-m-d H:i:s") => array(
+                "sms_scenario" => "СМС при недозвоне из колл-центра",
+                "sms_text" => trim($data['smsbody']),
+                "sms_provider" => "devino",
+                "sms_id" => (isset($server_output['Desc']) ? $server_output['Desc'] : $server_output)
+            )
+            )
+        ));
+        unset($this->sub_subscribe_params['obj']);
+        unset($this->sub_subscribe_params['if_exists']);
+        $res = $this->sub_api_execute($this->sub_subscribe_params);
+        //$ans=json_decode($res, true);
+        //print_r($ans);
 
         $this->sub_logout();
         //echo $res."<br />";
