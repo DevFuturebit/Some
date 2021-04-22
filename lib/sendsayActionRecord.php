@@ -807,7 +807,7 @@ class sendsayActionRecord extends sendsayAction {
             'Password' => 'Bitfuture2020',
             'DestinationAddress' => $data['phone'],
             'SourceAddress' => 'Lensmaster',
-            'Data' => 'Подтверждаем запись на проверку зрения '.$temp0[0].' в '.$temp0[1].( ($this->sub_subscribe_params['obj']['a25']['q132'] == 'regular' && $this->sub_subscribe_params['obj']['a25']['q628'] != '' && implode('-', array_reverse($temp)) <= '2021-03-01')? ' Получите бонус по коду  '.$this->sub_subscribe_params['obj']['a25']['q628'] : ''),
+            'Data' => 'Запись на проверку зрения '.$temp0[0].' в '.$temp0[1].( ($this->sub_subscribe_params['obj']['a25']['q132'] == 'regular' && $this->sub_subscribe_params['obj']['a25']['q628'] != '' && implode('-', array_reverse($temp)) <= '2021-05-31')? ' Бонус по коду  '.$this->sub_subscribe_params['obj']['a25']['q628'] : ''),
             'Validity' => '0',
         )));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -823,7 +823,7 @@ class sendsayActionRecord extends sendsayAction {
         $this->sub_subscribe_params['datakey']             = array(array(
             "sms_sent", "merge", array( date("Y-m-d H:i:s") => array(
                 "sms_scenario" => "Подтверждение записи на диагностику зрения",
-                "sms_text" => 'Подтверждаем запись на проверку зрения '.$temp0[0].' в '.$temp0[1].( ($this->sub_subscribe_params['obj']['a25']['q132'] == 'regular' && $this->sub_subscribe_params['obj']['a25']['q628'] != '' && implode('-', array_reverse($temp)) <= '2021-03-01')? ' Получите бонус по коду  '.$this->sub_subscribe_params['obj']['a25']['q628'] : ''),
+                "sms_text" => 'Запись на проверку зрения '.$temp0[0].' в '.$temp0[1].( ($this->sub_subscribe_params['obj']['a25']['q132'] == 'regular' && $this->sub_subscribe_params['obj']['a25']['q628'] != '' && implode('-', array_reverse($temp)) <= '2021-05-31')? ' Бонус по коду  '.$this->sub_subscribe_params['obj']['a25']['q628'] : ''),
                 "sms_provider" => "devino",
                 "sms_id" => (isset($server_output['Desc']) ? $server_output['Desc'] : $server_output)
             )
