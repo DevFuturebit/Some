@@ -537,6 +537,48 @@ class sendsayActionRecord extends sendsayAction {
 "1040121" => "30.05.2021",
 "1040158" => "31.05.2021"
         );
+    private $precision_promo = Array(
+        "1235330" => "22.04.2021",
+        "1236067" => "23.04.2021",
+        "1236115" => "24.04.2021",
+        "1237023" => "25.04.2021",
+        "1237629" => "26.04.2021",
+        "1238334" => "27.04.2021",
+        "1238345" => "28.04.2021",
+        "1238623" => "29.04.2021",
+        "1238753" => "30.04.2021",
+        "1238860" => "01.05.2021",
+        "1239757" => "02.05.2021",
+        "1241860" => "03.05.2021",
+        "1242737" => "04.05.2021",
+        "1243345" => "05.05.2021",
+        "1244497" => "06.05.2021",
+        "1244608" => "07.05.2021",
+        "1244779" => "08.05.2021",
+        "1245297" => "09.05.2021",
+        "1245696" => "10.05.2021",
+        "1245974" => "11.05.2021",
+        "1246072" => "12.05.2021",
+        "1246073" => "13.05.2021",
+        "1246626" => "14.05.2021",
+        "1246802" => "15.05.2021",
+        "1246866" => "16.05.2021",
+        "1247596" => "17.05.2021",
+        "1247835" => "18.05.2021",
+        "1249141" => "19.05.2021",
+        "1249359" => "20.05.2021",
+        "1249922" => "21.05.2021",
+        "1250208" => "22.05.2021",
+        "1252166" => "23.05.2021",
+        "1252557" => "24.05.2021",
+        "1254254" => "25.05.2021",
+        "1254785" => "26.05.2021",
+        "1254878" => "27.05.2021",
+        "1254893" => "28.05.2021",
+        "1255498" => "29.05.2021",
+        "1256615" => "30.05.2021",
+        "1256698" => "31.05.2021",
+);
 
     public $cities = array ( // чтобы записать в сендсей смещение нужное для города, надо от москвы отнять нужный город. формула: нужное вермя = переданое + смещение
         'калининград' => 2,
@@ -686,10 +728,18 @@ class sendsayActionRecord extends sendsayAction {
         $this->sub_subscribe_params['obj']['a25']['q911'] = date("Y-m-d H:i");
         $temp0 = explode(' ', $data['record_date']);
         $temp = explode('.', $temp0[0]);
-        if (in_array($temp0[0], $this->promos)) {
-            $this->sub_subscribe_params['obj']['a25']['q628'] = array_search($temp0[0], $this->promos);
+        if ($special == 'precision1') {
+            if (in_array($temp0[0], $this->precision_promo)) {
+                $this->sub_subscribe_params['obj']['a25']['q628'] = array_search($temp0[0], $this->precision_promo);
+            } else {
+                $this->sub_subscribe_params['obj']['a25']['q628'] = "";
+            }
         } else {
-            $this->sub_subscribe_params['obj']['a25']['q628'] = "";
+            if (in_array($temp0[0], $this->promos)) {
+                $this->sub_subscribe_params['obj']['a25']['q628'] = array_search($temp0[0], $this->promos);
+            } else {
+                $this->sub_subscribe_params['obj']['a25']['q628'] = "";
+            }
         }
         $absolut_date = implode('-', array_reverse($temp))." ".$temp0[1];
         $this->sub_subscribe_params['obj']['a25']['q942'] = $absolut_date;
@@ -797,43 +847,56 @@ class sendsayActionRecord extends sendsayAction {
         $this->sub_sms_send_params['sendwhen']  = "now";
         $res = $this->sub_api_execute($this->sub_sms_send_params);
         */
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,"https://integrationapi.net/rest/v2/Sms/Send");
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_POSTFIELDS,      http_build_query(array(
-            'Login' => 'Lensmaster',
-            'Password' => 'Bitfuture2020',
-            'DestinationAddress' => $data['phone'],
-            'SourceAddress' => 'Lensmaster',
-            'Data' => 'Запись на проверку зрения '.$temp0[0].' в '.$temp0[1].( ($this->sub_subscribe_params['obj']['a25']['q132'] == 'regular' && $this->sub_subscribe_params['obj']['a25']['q628'] != '' && implode('-', array_reverse($temp)) <= '2021-05-31')? ' Бонус по коду  '.$this->sub_subscribe_params['obj']['a25']['q628'] : ''),
-            'Validity' => '0',
-        )));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $server_output = curl_exec($ch);
-        //echo $server_output.'<br>';
-        curl_close ($ch);
-        $ans=json_decode($res, true);
-        //echo "<pre>";
-        //print_r($ans);
-        //echo "</pre>";
+            // получим текст смс
+            $get_template_request = Array(
+                "action" => "issue.draft.preview",
+                "id" => "515",
+                "email" => trim($data['phone']));
+            $res = $this->sub_api_execute($get_template_request);
+            $ans2=json_decode($res, true);
+            if (!empty($ans2['letter']['message']['sms'])) {
+                $sms_text = $ans2['letter']['message']['sms'];
+            }
 
-        $server_output = json_decode($server_output, true);
-        $this->sub_subscribe_params['datakey']             = array(array(
-            "sms_sent", "merge", array( date("Y-m-d H:i:s") => array(
-                "sms_scenario" => "Подтверждение записи на диагностику зрения",
-                "sms_text" => 'Запись на проверку зрения '.$temp0[0].' в '.$temp0[1].( ($this->sub_subscribe_params['obj']['a25']['q132'] == 'regular' && $this->sub_subscribe_params['obj']['a25']['q628'] != '' && implode('-', array_reverse($temp)) <= '2021-05-31')? ' Бонус по коду  '.$this->sub_subscribe_params['obj']['a25']['q628'] : ''),
-                "sms_provider" => "devino",
-                "sms_id" => (isset($server_output['Desc']) ? $server_output['Desc'] : $server_output)
-            )
-            )
-        ));
-        unset($this->sub_subscribe_params['obj']);
-        unset($this->sub_subscribe_params['if_exists']);
-        $res = $this->sub_api_execute($this->sub_subscribe_params);
-        //$ans=json_decode($res, true);
-        //print_r($ans);
+        if (!empty($sms_text)) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL,"https://integrationapi.net/rest/v2/Sms/Send");
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_POSTFIELDS,      http_build_query(array(
+                'Login' => 'Lensmaster',
+                'Password' => 'Bitfuture2020',
+                'DestinationAddress' => $data['phone'],
+                'SourceAddress' => 'Lensmaster',
+                'Data' => $sms_text,
+                'Validity' => '0',
+            )));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $server_output = curl_exec($ch);
+            //echo $server_output.'<br>';
+            curl_close ($ch);
+            $ans=json_decode($res, true);
+            //echo "<pre>";
+            //print_r($ans);
+            //echo "</pre>";
+
+            $server_output = json_decode($server_output, true);
+            $this->sub_subscribe_params['datakey']             = array(array(
+                "sms_sent", "merge", array( date("Y-m-d H:i:s") => array(
+                    "sms_scenario" => "Подтверждение записи на диагностику зрения",
+                    "sms_text" => $sms_text,
+                    "sms_provider" => "devino",
+                    "sms_id" => (isset($server_output['Desc']) ? $server_output['Desc'] : $server_output)
+                )
+                )
+            ));
+            unset($this->sub_subscribe_params['obj']);
+            unset($this->sub_subscribe_params['if_exists']);
+            $res = $this->sub_api_execute($this->sub_subscribe_params);
+            //$ans=json_decode($res, true);
+            //print_r($ans);
+        }
 
         $this->sub_logout();
         $ans=json_decode($res, true);
