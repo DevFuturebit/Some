@@ -55,7 +55,7 @@ class sendsay_diagnostika_reminder extends sendsayAction
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
                         curl_setopt($ch, CURLOPT_POSTFIELDS,      http_build_query(array(
                             'Login' => 'Lensmaster',
-                            'Password' => 'Bitfuture2020',
+                            'Password' => 'LWOW9201Jfkw19',
                             'DestinationAddress' => trim($value['email']),
                             'SourceAddress' => 'Lensmaster',
                             'Data' => $ans2['letter']['message']['sms'],
