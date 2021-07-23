@@ -57,9 +57,7 @@ class sendsayActionAuthorization_PhoneCheck extends sendsayAction
         }
         /* времено отключаем на время тестирования передача СМС через Devino
         $this->sub_send_params['users.list']         = $data['phone'];
-
         $res = $this->sub_api_execute($this->sub_send_params);
-
         */
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL,"https://integrationapi.net/rest/v2/Sms/Send");
@@ -68,7 +66,7 @@ class sendsayActionAuthorization_PhoneCheck extends sendsayAction
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_POSTFIELDS,      http_build_query(array(
             'Login' => 'Lensmaster',
-            'Password' => 'Bitfuture2020',
+            'Password' => 'LWOW9201Jfkw19',
             'DestinationAddress' => $data['phone'],
             'SourceAddress' => 'Lensmaster',
             'Data' => 'Код для доступа в личный кабинет: '.$data['checkcode'],
