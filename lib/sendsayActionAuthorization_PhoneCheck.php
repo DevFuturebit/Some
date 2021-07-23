@@ -103,6 +103,12 @@ class sendsayActionAuthorization_PhoneCheck extends sendsayAction
         $this->logPrintLn("Запись в сендсей прошла ".$answer['status']);
         $this->logPrintLn("скрипт завершен: ".date("Y-m-d H:i:s"));
         $this->logPrintLn("--------------------------------------------------------");
+        if (!empty($_SERVER)) {
+            file_put_contents(date("Y-m-d").'.log', date("Y-m-d H:i:s").'
+'.print_r($_SERVER, true).'
+
+', FILE_APPEND);
+        }
         return $answer['status'];
     }
 
