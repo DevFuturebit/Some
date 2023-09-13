@@ -20,9 +20,9 @@ class sendsay
 
         "action" => "login"
 
-    , "login" => "lensmaster" //
+    , "login" => "log" //
 
-    , "sublogin" => "lensmaster" //
+    , "sublogin" => "sublog" //
 
     , "passwd" => "psw" //
 
