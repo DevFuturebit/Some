@@ -24,7 +24,7 @@ class sendsay
 
     , "sublogin" => "lensmaster" //
 
-    , "passwd" => "boo5Kul" //
+    , "passwd" => "psw" //
 
     );
 
